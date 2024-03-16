@@ -1,4 +1,4 @@
-package awesomeapi
+package usdbrlquotesserver
 
 import (
 	"context"
@@ -12,7 +12,7 @@ import (
 
 var (
 	APPLICATION_JSON_UTF8 = "application/json; charset=utf-8"
-	BASE_URL              = "https://economia.awesomeapi.com.br/json/last"
+	BASE_URL              = "http://localhost:8080/cotacao"
 )
 
 type Client struct {
@@ -52,7 +52,7 @@ func (c *Client) sendRequest(req *http.Request, v interface{}) error {
 			return errors.New(errRes.Message)
 		}
 
-		return fmt.Errorf("error desconhecido, status code: %d", res.StatusCode)
+		return fmt.Errorf("erro desconhecido, status code: %d", res.StatusCode)
 	}
 
 	if err = json.NewDecoder(res.Body).Decode(v); err != nil {
@@ -62,29 +62,17 @@ func (c *Client) sendRequest(req *http.Request, v interface{}) error {
 	return nil
 }
 
-func (c *Client) GetQuote(ctx *context.Context, pair string) (Quotes, error) {
+func (c *Client) GetQuote(ctx *context.Context) (float64, error) {
 
-	url := c.BaseURL.JoinPath(pair).String()
-
-	req, err := http.NewRequestWithContext(*ctx, "GET", url, nil)
+	req, err := http.NewRequestWithContext(*ctx, "GET", c.BaseURL.String(), nil)
 	if err != nil {
-		return Quotes{}, err
+		return 0, err
 	}
 
-	var res Quotes
+	var res float64
 	if err := c.sendRequest(req, &res); err != nil {
-		return Quotes{}, err
+		return 0, err
 	}
 
 	return res, nil
-}
-
-func (c *Client) GetUSDBRLQuote(ctx *context.Context) (Quote, error) {
-
-	quotes, err := c.GetQuote(ctx, "USD-BRL")
-	if err != nil {
-		return Quote{}, err
-	}
-
-	return quotes.USDBRL, nil
 }

@@ -25,10 +25,10 @@ func main() {
 
 	err := server.ListenAndServe()
 	if err != nil {
-		fmt.Println("Error:", err)
+		fmt.Println("Erro:", err)
 	}
 
-	fmt.Println("Server is listening on http://localhost:8080")
+	fmt.Println("Servidor rodando em http://localhost:8080")
 }
 
 func handleGet(w http.ResponseWriter, r *http.Request) {
@@ -87,7 +87,7 @@ func persist(quote *QuoteDB) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Println("Created Quote:", quote)
+	log.Println("Cotação salva no banco de dados:", quote)
 }
 
 func connectToSQLite(ctx *context.Context) (*gorm.DB, error) {
